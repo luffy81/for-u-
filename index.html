@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Just For You 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Satisfy&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --rose:  #f43f77;
+      --blush: #ffd6e0;
+      --cream: #fff8f0;
+      --mauve: #8b2252;
+      --gold:  #e8a87c;
+    }
+
+    html, body {
+      height: 100%; width: 100%;
+      overflow: hidden;
+      font-family: 'Lato', sans-serif;
+      background: var(--cream);
+    }
+
+    /* ── PAGES ── */
+    .page {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 32px 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      transform: translateY(30px);
+      overflow: hidden;
+    }
+    .page.active { opacity: 1; pointer-events: all; transform: translateY(0); }
+    .page.exit   { opacity: 0; transform: translateY(-30px); }
+
+    /* ── BACK BUTTON ── */
+    .back-btn {
+      position: absolute;
+      top: 18px; left: 18px;
+      z-index: 50;
+      background: rgba(255,255,255,0.18);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      color: #fff;
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      padding: 8px 16px 8px 12px;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background 0.2s, transform 0.2s;
+      font-family: 'Lato', sans-serif;
+    }
+    .back-btn:active { transform: scale(0.94); }
+    .back-btn .arrow { font-size: 1rem; line-height: 1; }
+    /* dark variant for light pages */
+    .back-btn.dark {
+      background: rgba(139,34,82,0.10);
+      border-color: rgba(139,34,82,0.25);
+      color: var(--mauve);
+    }
+
+    /* ── FLOATING BG EMOJIS ── */
+    .hearts-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .hb {
+      position: absolute; bottom: -60px;
+      animation: floatUp linear infinite; opacity: 0;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ══ PAGE 1 — HI BEAUTIFUL ══ */
+    #p1 { background: linear-gradient(160deg, #fff0f5 0%, #ffe4ef 60%, #ffd6e0 100%); }
+    #p1 .envelope-wrap {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; gap: 28px;
+      text-align: center;
+    }
+    .envelope {
+      width: 130px; height: 90px;
+      background: var(--rose); border-radius: 6px;
+      position: relative;
+      box-shadow: 0 12px 32px rgba(244,63,119,.35);
+      animation: pulse 2s ease-in-out infinite; cursor: pointer;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+    .envelope::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0;
+      border-left: 65px solid transparent; border-right: 65px solid transparent;
+      border-top: 45px solid #f76fa0;
+    }
+    .envelope::after {
+      content: '💌'; font-size: 2.6rem;
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -38%);
+    }
+    #p1 h1 {
+      font-family: 'Satisfy', cursive;
+      font-size: clamp(2.2rem, 9vw, 3rem);
+      color: var(--mauve); line-height: 1.2;
+    }
+    #p1 .envelope-wrap > p {
+      font-size: clamp(0.95rem, 4vw, 1.05rem);
+      color: #b05070; font-weight: 300; letter-spacing: 0.03em;
+    }
+
+    /* ── SHARED BUTTON ── */
+    .btn {
+      margin-top: 8px; padding: 14px 38px;
+      background: var(--rose); color: #fff;
+      border: none; border-radius: 50px;
+      font-family: 'Lato', sans-serif;
+      font-size: 1rem; letter-spacing: 0.08em; font-weight: 400;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(244,63,119,.4);
+      transition: transform 0.2s;
+      position: relative; z-index: 1;
+    }
+    .btn:active { transform: scale(0.96); }
+
+    /* ══ PAGE 2 — MEASURING CUTENESS ══ */
+    #p2 { background: linear-gradient(140deg, #1a0a12 0%, #3d0c28 60%, #5c1038 100%); }
+    #p2 .inner { position: relative; z-index: 1; text-align: center; width: 100%; max-width: 340px; }
+    #p2 h2 {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(1.5rem, 7vw, 2rem); color: var(--blush); margin-bottom: 10px;
+    }
+    #p2 .sub { color: #c47a99; font-size: 0.85rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 32px; }
+    .bar-wrap {
+      background: rgba(255,255,255,.08); border-radius: 50px;
+      height: 18px; width: 100%; overflow: hidden; margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .bar-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, #f43f77, #ff9eb5, #f9d423);
+      border-radius: 50px; transition: width 0.12s linear;
+      box-shadow: 0 0 12px rgba(244,63,119,.6);
+    }
+    #pct {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 14vw, 4.5rem);
+      color: #fff; font-weight: 700; line-height: 1; margin-bottom: 6px;
+    }
+    #pct-label { color: var(--gold); font-size: 0.9rem; letter-spacing: 0.1em; }
+    .sparkles { font-size: 2rem; margin-top: 20px; letter-spacing: 8px; }
+
+    /* ══ PAGE 3 — JUST FOR YOU ══ */
+    #p3 { background: linear-gradient(155deg, #fff0f8 0%, #ffe6f0 50%, #fcd5e8 100%); }
+    #p3 .inner { position: relative; z-index: 1; text-align: center; max-width: 340px; }
+    #p3 .gift-icon { font-size: 5rem; margin-bottom: 18px; animation: wiggle 2.5s ease-in-out infinite; }
+    @keyframes wiggle {
+      0%,100%{ transform: rotate(0deg) scale(1); }
+      25%    { transform: rotate(-8deg) scale(1.05); }
+      75%    { transform: rotate(8deg) scale(1.05); }
+    }
+    #p3 h2 { font-family: 'Satisfy', cursive; font-size: clamp(2.2rem, 9vw, 3rem); color: var(--mauve); margin-bottom: 12px; }
+    #p3 .gifts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 20px 0 28px; }
+    .gift-chip {
+      background: #fff; border: 1.5px solid #f9b8ce; border-radius: 20px;
+      padding: 8px 16px; font-size: 0.9rem; color: #c0386a;
+      box-shadow: 0 4px 12px rgba(244,63,119,.12);
+      animation: popIn 0.5s ease backwards;
+    }
+    @keyframes popIn { from{transform:scale(0.7);opacity:0} to{transform:scale(1);opacity:1} }
+
+    /* ══ PAGE 4 — LITTLE NOTE ══ */
+    #p4 { background: linear-gradient(160deg, #0d0812 0%, #1e0a22 60%, #2e0d38 100%); }
+    #p4 .inner { position: relative; z-index: 1; width: 100%; max-width: 360px; }
+    .paper {
+      background: var(--cream); border-radius: 16px;
+      padding: 30px 26px; box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      position: relative; overflow: hidden;
+    }
+    .paper::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--rose), var(--gold), var(--rose));
+    }
+    .paper-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: #c47a99; margin-bottom: 14px; }
+    .paper h3 {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(1.4rem, 6vw, 1.7rem); color: var(--mauve); margin-bottom: 16px;
+    }
+    .paper p { font-size: 0.97rem; color: #5a2a3a; line-height: 1.75; font-weight: 300; }
+    .paper .sig { margin-top: 20px; text-align: right; font-family: 'Satisfy', cursive; font-size: 1.3rem; color: var(--rose); }
+    .paper .lines {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background-image: repeating-linear-gradient(transparent, transparent 31px, #fae4ec 31px, #fae4ec 32px);
+      background-position: 0 48px; opacity: 0.4;
+    }
+    .paper > * { position: relative; z-index: 1; }
+    #p4 .footer-hearts {
+      text-align: center; margin-top: 22px; font-size: 1.5rem; letter-spacing: 6px;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+    @keyframes heartbeat { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+    /* ══ PAGE 5 — COMPLAINTS ══ */
+    #p5 {
+      background: linear-gradient(155deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      justify-content: flex-start; padding-top: 60px; overflow-y: auto;
+    }
+    #p5 .inner { position: relative; z-index: 1; width: 100%; max-width: 370px; padding-bottom: 80px; }
+    .complaint-header { text-align: center; margin-bottom: 28px; }
+    .stamp {
+      display: inline-block; border: 3px solid #ff6b6b; color: #ff6b6b;
+      font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 4px; margin-bottom: 14px;
+      transform: rotate(-2deg); font-weight: 700;
+      box-shadow: 0 0 12px rgba(255,107,107,.3);
+    }
+    .complaint-header h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.7rem, 8vw, 2.2rem); color: #fff; line-height: 1.2; }
+    .complaint-header h2 span { color: #ff6b6b; font-style: italic; }
+    .complaint-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+    .c-item {
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,107,107,.25);
+      border-left: 4px solid #ff6b6b; border-radius: 12px;
+      padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;
+      animation: slideIn 0.5s ease backwards;
+    }
+    @keyframes slideIn { from{transform:translateX(-24px);opacity:0} to{transform:translateX(0);opacity:1} }
+    .c-num {
+      background: #ff6b6b; color: #fff; font-size: 0.75rem; font-weight: 700;
+      min-width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px; flex-shrink: 0;
+    }
+    .c-text { color: #e0c8d8; font-size: clamp(0.92rem, 4vw, 1rem); line-height: 1.5; font-weight: 300; }
+    .c-text small { color: #7a6a7a; font-size: 0.8rem; }
+    .complaint-footer { text-align: center; border-top: 1px solid rgba(255,255,255,.1); padding-top: 24px; }
+    .big-line {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 8vw, 2.2rem);
+      color: #fff; font-weight: 700; margin-bottom: 12px; line-height: 1.3;
+    }
+    .big-line span { color: #ff6b6b; }
+    .sub-note { font-size: clamp(0.8rem, 3.5vw, 0.9rem); color: #9a8fa8; font-style: italic; line-height: 1.7; max-width: 280px; margin: 0 auto; }
+    .sub-note strong { color: #c47a99; font-style: normal; }
+
+    /* ── NAV DOTS ── */
+    .dots {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 100;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(244,63,119,.3); transition: background 0.3s, transform 0.3s; }
+    .dot.on { background: var(--rose); transform: scale(1.3); }
+
+    /* ── CONFETTI ── */
+    #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══ PAGE 1: HI BEAUTIFUL ══ -->
+<div class="page active" id="p1">
+  <div class="hearts-bg" id="hb1"></div>
+  <!-- no back button on page 1 — it's the first page -->
+  <div class="envelope-wrap">
+    <div class="envelope"></div>
+    <h1>Hi, Beautiful 🌸</h1>
+    <p>I made something special<br>just to make you smile today.</p>
+    <button class="btn" onclick="goTo(2)">Open ✨</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 2: MEASURING YOUR CUTENESS ══ -->
+<div class="page" id="p2">
+  <div class="hearts-bg" id="hb2"></div>
+  <button class="back-btn" onclick="goTo(1)">
+    <span class="arrow">‹</span> Back
+  </button>
+  <div class="inner">
+    <h2>Measuring your cuteness…</h2>
+    <p class="sub">Please wait ✨</p>
+    <div class="bar-wrap"><div class="bar-fill" id="barFill"></div></div>
+    <div id="pct">0%</div>
+    <div id="pct-label">calculating…</div>
+    <div class="sparkles" id="sparkles" style="opacity:0">✨💖✨</div>
+  </div>
+</div>
+
+<!-- ══ PAGE 3: JUST FOR YOU ══ -->
+<div class="page" id="p3">
+  <div class="hearts-bg" id="hb3"></div>
+  <button class="back-btn dark" onclick="goTo(2)">
+    <span class="arrow">‹</span> Back
+  </button>
+  <div class="inner">
+    <div class="gift-icon">🎁</div>
+    <h2>Just for You</h2>
+    <p style="color:#b05070;font-size:.95rem;margin-bottom:4px;">A few things I want you to know:</p>
+    <div class="gifts" id="giftList"></div>
+    <button class="btn" onclick="goTo(4)">Read my note 💌</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 4: LITTLE NOTE ══ -->
+<div class="page" id="p4">
+  <div class="hearts-bg" id="hb4"></div>
+  <button class="back-btn" onclick="goTo(3)">
+    <span class="arrow">‹</span> Back
+  </button>
+  <div class="inner">
+    <div class="paper">
+      <div class="lines"></div>
+      <div class="paper-label">✦ a little note for you ✦</div>
+      <h3>To the one who makes everything better,</h3>
+      <p id="noteText">
+        I know we don’t know each other that well yet, but talking to you these days has been really fun.
+        You seem like a genuinely sweet and interesting person, and I enjoy our conversations. 🌷
+        <br><br>
+        So I just wanted to say this honestly… I think I’m starting to like you a little.
+        No pressure at all — I just wanted you to know how I feel. 💫
+      </p>
+      <div class="sig">— always yours 🌹</div>
+    </div>
+    <div class="footer-hearts">💖 💗 💖</div>
+    <button class="btn" style="margin-top:20px;background:#8b2252;" onclick="goTo(5)">One more thing… 😤</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 5: COMPLAINTS ══ -->
+<div class="page" id="p5">
+  <div class="hearts-bg" id="hb5"></div>
+  <button class="back-btn" onclick="goTo(4)">
+    <span class="arrow">‹</span> Back
+  </button>
+  <div class="inner">
+    <div class="complaint-header">
+      <div class="stamp">📋 Official Notice</div>
+      <h2>Complaints I <span>Have</span> 😤</h2>
+    </div>
+    <div class="complaint-list">
+      <div class="c-item" style="animation-delay:0.1s">
+        <div class="c-num">1</div>
+        <div class="c-text">
+          Your short replies 😑<br>
+          <small>One word answers are NOT so cool.</small>
+        </div>
+      </div>
+      <div class="c-item" style="animation-delay:0.25s">
+        <div class="c-num">2</div>
+        <div class="c-text">
+          The way u ignore my questions and change the topic 😒<br>
+          <small>I see what you did there. I always see it.</small>
+        </div>
+      </div>
+    </div>
+    <div class="complaint-footer">
+      <div class="big-line">That's all<br>for <span>now.</span></div>
+      <p class="sub-note">
+        Future complaints will be <strong>notified to you later.</strong><br>
+        Please keep this in a safe place. 📂
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ NAV DOTS ══ -->
+<div class="dots">
+  <div class="dot on" id="d1"></div>
+  <div class="dot"    id="d2"></div>
+  <div class="dot"    id="d3"></div>
+  <div class="dot"    id="d4"></div>
+  <div class="dot"    id="d5"></div>
+</div>
+
+<script>
+  // ── FLOATING BG EMOJIS ──
+  function spawnHearts(id, emojis, count) {
+    const c = document.getElementById(id);
+    for (let i = 0; i < count; i++) {
+      const h = document.createElement('span');
+      h.className = 'hb';
+      h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      h.style.left = Math.random() * 100 + '%';
+      h.style.fontSize = (12 + Math.random() * 18) + 'px';
+      const dur = 6 + Math.random() * 8;
+      h.style.animationDuration = dur + 's';
+      h.style.animationDelay    = (Math.random() * dur) + 's';
+      c.appendChild(h);
+    }
+  }
+  spawnHearts('hb1', ['💗','💕','🌸','✨'], 18);
+  spawnHearts('hb2', ['✨','⭐','💫','🌟'], 14);
+  spawnHearts('hb3', ['🎀','💝','🌷','💖'], 18);
+  spawnHearts('hb4', ['💌','💗','🌹','✨'], 16);
+  spawnHearts('hb5', ['😤','📋','😑','😒','💢'], 12);
+
+  // ── GIFT CHIPS ──
+  const gifts = [
+    '💖 You are loved',    '🌟 You are enough',
+    '🌸 You are beautiful','✨ You make people happy',
+    '🦋 You are one of a kind','🌙 You deserve the world'
+  ];
+  const gl = document.getElementById('giftList');
+  gifts.forEach((g, i) => {
+    const el = document.createElement('div');
+    el.className = 'gift-chip';
+    el.textContent = g;
+    el.style.animationDelay = (i * 0.1) + 's';
+    gl.appendChild(el);
+  });
+
+  // ── PAGE NAVIGATION ──
+  let current = 1;
+  function goTo(n) {
+    const prev = document.getElementById('p' + current);
+    const next = document.getElementById('p' + n);
+    prev.classList.add('exit');
+    setTimeout(() => { prev.classList.remove('active', 'exit'); }, 650);
+    next.classList.add('active');
+    document.getElementById('d' + current).classList.remove('on');
+    document.getElementById('d' + n).classList.add('on');
+    current = n;
+    if (n === 2) startLoader();
+    if (n === 4) setTimeout(launchConfetti, 400);
+  }
+
+  // ── CUTENESS LOADER ──
+  function startLoader() {
+    const bar = document.getElementById('barFill');
+    const pct = document.getElementById('pct');
+    const lbl = document.getElementById('pct-label');
+    const sp  = document.getElementById('sparkles');
+    const labels = ['scanning…','analyzing…','confirming…','off the charts!'];
+    let val = 0;
+    bar.style.width = '0%';
+    pct.textContent = '0%';
+    sp.style.opacity = 0;
+    const iv = setInterval(() => {
+      val += Math.random() * 3.5 + 0.5;
+      if (val >= 100) { val = 100; clearInterval(iv); done(); }
+      const p = Math.min(Math.round(val), 100);
+      bar.style.width = p + '%';
+      pct.textContent = p + '%';
+      lbl.textContent = labels[Math.floor(p / 25)];
+    }, 60);
+    function done() {
+      pct.textContent = '100%';
+      lbl.textContent = '🌟 Impossibly cute 🌟';
+      sp.style.opacity = 1;
+      setTimeout(() => goTo(3), 1800);
+    }
+  }
+
+  // ── CONFETTI ──
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx    = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const pieces = Array.from({ length: 90 }, () => ({
+      x: Math.random() * canvas.width, y: -20,
+      r: 5 + Math.random() * 8,
+      c: ['#f43f77','#ff9eb5','#ffd6e0','#f9d423','#e8a87c','#c084fc'][Math.floor(Math.random()*6)],
+      vx: (Math.random()-0.5)*3, vy: 2+Math.random()*4,
+      spin: (Math.random()-0.5)*0.2, angle: Math.random()*Math.PI*2
+    }));
+    function draw() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      pieces.forEach(p => {
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.angle);
+        ctx.fillStyle = p.c; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r*0.5);
+        ctx.restore();
+        p.x+=p.vx; p.y+=p.vy; p.angle+=p.spin;
+      });
+      if (pieces.some(p => p.y < canvas.height+20)) requestAnimationFrame(draw);
+      else ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+    draw();
+  }
+</script>
+</body>
+</html>
